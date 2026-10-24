@@ -28,24 +28,27 @@ Conditional checks for edge values are intentionally omitted to avoid
 GPU branching overhead and optimize shader instruction count.
 
 */
-//                               for dark mode
+//                          for dark mode 
+//              (default, if the others are not used)
 #define DARK_COLD_MIN    0.1    // the darkest cold areas can reach    (lower = darker)
 #define DARK_COLD_MAX    0.2    // the brightest cold areas can reach  (lower = darker)
 #define DARK_HOT         0.8    // enemies brightness                  (lower = darker)
 #define DARK_SKY         0      // skybox brightness                   (lower = darker)
 #define DARK_BRIGHTNESS  0.5    // overall brightness                  (lower = darker)
 
-//                   for white mode (markswitch_current.x == 1)
+//                      for white mode
+//                   used if "switchMode = 1"
 #define LIGHT_COLD_MIN   0.7    // the darkest cold areas can reach    (lower = darker)
 #define LIGHT_COLD_MAX   1      // the brightest cold areas can reach  (lower = darker)
 #define LIGHT_HOT        0.01   // enemies brightness                  (lower = darker)
 #define LIGHT_SKY        1      // skybox brightness                   (lower = darker)
 #define LIGHT_BRIGHTNESS 0.6    // overall brightness                  (lower = darker)
 
-//                                for color mode
+//                      for color mode
+//                   used if "imageType == 3"
 #define COLOR_COLD_MIN   0.1    // the darkest cold areas can reach    (lower = darker) 
 #define COLOR_COLD_MAX   0.3    // the brightest cold areas can reach  (lower = darker) 
-#define COLOR_HOT        0.94   // enemies brightness                 (lower = darker)
+#define COLOR_HOT        0.94   // enemies brightness                  (lower = darker)
 #define COLOR_SKY        0.01   // skybox brightness                   (lower = darker)
 #define COLOR_BRIGHTNESS 0.6    // overall brightness                  (lower = darker)
 	
@@ -63,7 +66,9 @@ float3 normal_blur(float2 pos2d, int samples)
 }
 
 /* gets information from "models_scope_reticle.ps" and/or "models_scope_reticle_precise.ps" */
-float infrared(gbuffer_data gbd, float2 HPos, float2 Tex0, int imageType, int switchMode)
+/* i added 2 additional arguments: int imageType = 0, int switchMode = 0, to know if the function should use the settings for them*/
+/* if it gets only 3 arguments, like how 3dss is by default, it will use dark mode*/
+float infrared(gbuffer_data gbd, float2 HPos, float2 Tex0, int imageType = 0, int switchMode = 0)
 {	
     float3 hotness3 = s_heat.Load(int3(Tex0 * screen_res.xy, 0 ), 0).rgb;
 	float hotness = max(hotness3.r, max(hotness3.g, hotness3.b));
@@ -100,7 +105,7 @@ float infrared(gbuffer_data gbd, float2 HPos, float2 Tex0, int imageType, int sw
 		return sky_val;
 	}
 	
-	float hot_color;
+	float hot_color = cold_max;
     if (hotness > 0.0)
     {
         int samples = lerp(15, 4, smoothstep(0.0, 60, depth));
@@ -117,8 +122,8 @@ float infrared(gbuffer_data gbd, float2 HPos, float2 Tex0, int imageType, int sw
 	float projection = dot(normalize(gbd.N), float3(0.0, 0.0, -1.0));
 	float mixed = lerp(cold_min, cold_max, projection);
 
-    float output = lerp(mixed, hot_color, hotness);
-    output *= val_multiplier; /* this is the final brightness, i multiply with 0.x cuz i thought it was easiest this way */
+    float result = lerp(mixed, hot_color, hotness);
+    result *= val_multiplier; /* this is the final brightness, i multiply with 0.x cuz i thought it was easiest this way */
 
-    return output;
+    return result;
 }
