@@ -1,30 +1,29 @@
 # 3dss-thermal-scopes-fix
-In default 3DSS, all thermal vision modes share the same hardcoded values, which makes tweaking one mode mess up the others.
-I rewrote the shader logic to split everything into three independent sets of values: Dark Mode, Light Mode, and Color Mode.
+In default 3DSS, all thermal vision modes share the same hardcoded values, 
+which makes tweaking one mode mess up the others.
+I rewrote the shader logic to split everything into three independent sets of 
+values: Dark Mode, Light Mode, and Color Mode.
 
-Now, each mode has its own dedicated settings for cold backgrounds, enemy hot spots, skybox brightness,
-and an overall brightness multiplier, so you can tune White Hot, Black Hot,
-and Color thermal modes completely independently without compromises.
+Now, each mode has its own dedicated settings for cold backgrounds, 
+enemy hot spots, skybox brightness, and an overall brightness multiplier,
+so you can tune White Hot, Black Hot, and Color thermal modes
+completely independently without compromises.
 
-I also remade the T12 scope reticle image to strip out a blue tint
-that was interfering with the shader rendering.
+I also remade the T12 scope reticle image to strip out the blue tint,
+it was interfering with the shader rendering and causing problems.
 
 
-If you want to tweak the values yourself, head over to:
+If you want to tweak the values yourself, go to:
 ..\Gamma\mods\3dss thermal scopes fix unofficial\gamedata\shaders\r3\thermal_utils.h
 
-I left comments in the file explaining what each value does so you know what to tweak.
-
-
+I left comments in the file explaining what each value does,
+so you know what to tweak.
 
 Installation:
-
-1. Delete your shader cache (found in ..\Anomaly\appdata)
-
-2. Place this at the bottom of your MO2 load order so it overwrites 3DSS 5.x.
-
-3. Don't forget to delete your shader cache!
-
+    
+  1.  Delete your shader cache (found in ..\Anomaly\appdata)
+  2. Place this mod at the bottom of your MO2 load order so it overwrites 3DSS 5.x.
+  3. Don't forget to delete your shader cache!
 
 
 Hope you enjoy.
@@ -34,7 +33,6 @@ Hope you enjoy.
 
 Note: If anyone knows whether it's possible to hook these thermal image settings 
 into MCM (Mod Configuration Menu), please let me know.
-
 <br><br><br>
 
 
